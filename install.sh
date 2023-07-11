@@ -61,7 +61,7 @@ echo " o Installing plugins."
 echo " o Fetching version number."
 vernum=$(curl https://plugins.nessus.org/v2/plugins.php 2> /dev/null)
 echo " o Building plugin feed."
-cat > /opt/nessus/var/nessus/plugin_feed_info.inc <<EOF
+sudo cat > /opt/nessus/var/nessus/plugin_feed_info.inc <<EOF
 PLUGIN_SET = "${vernum}";
 PLUGIN_FEED = "ProfessionalFeed (Direct)";
 PLUGIN_FEED_TRANSPORT = "Tenable Network Security Lightning";
