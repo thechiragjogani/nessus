@@ -13,7 +13,7 @@ curl -A Mozilla --request GET \
   --url 'https://www.tenable.com/downloads/api/v2/pages/nessus/files/Nessus-10.4.2-ubuntu1404_amd64.deb' \
   --output 'Nessus-10.4.2-ubuntu1404_amd64.deb' &>/dev/null
 echo " o Installing Nessus.."
-dpkg -i Nessus-10.4.2-ubuntu1404_amd64.deb &>/dev/null
+sudo dpkg -i Nessus-10.4.2-ubuntu1404_amd64.deb &>/dev/null
 echo " o Starting service once FIRST TIME INITIALIZATION (we have to do this)"
 /bin/systemctl start nessusd.service &>/dev/null
 echo " o Let's allow Nessus time to initalize - we'll give it like 20 seconds..."
