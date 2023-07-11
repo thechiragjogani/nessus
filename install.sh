@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ $(id -u) -ne 0 ]] ; then echo "Please run as root" ; exit 1 ; fi
 echo //==============================================================
-echo "          Nessus 10.4.1 DOWNLOAD, INSTALL, and CRACK"
+echo "          Nessus 10.5.3 DOWNLOAD, INSTALL, and CRACK"
 echo //==============================================================
 echo " o Installing Prerequisites.."
 apt update &>/dev/null
