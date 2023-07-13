@@ -58,18 +58,18 @@ rm -rf expect.tmp &>/dev/null
 sudo rm /usr/bin/nessus &>/dev/null
 sudo cat > /usr/bin/nessus<<'EOF'
 #!/bin/bash
-vernum=`curl https://plugins.nessus.org/v2/plugins.php 2> /dev/null`
+availablePlugins=`curl https://plugins.nessus.org/v2/plugins.php 2> /dev/null`
 installedPlugins=`cat /opt/nessus/var/nessus/plugin_feed_info.inc | grep 2 | cut -b 15-26`
 echo " o Checking for new plugins."
-if [ "$installedPlugins" = "$vernum" ]; then
+if [ "$installedPlugins" = "$availablePlugins" ]; then
    echo
    echo " o Installed Plugins:   ${installedPlugins}"
-   echo " o Available Plugins:   ${vernum}"
+   echo " o Available Plugins:   ${availablePlugins}"
    echo " o Latest Plugins already installed."   
 else
    echo
    echo " o Installed Plugins:   ${installedPlugins}"
-   echo " o Available Plugins:   ${vernum}"
+   echo " o Available Plugins:   ${availablePlugins}"
    echo
    echo " o Downloading new plugins."
    wget 'https://plugins.nessus.org/v2/nessus.php?f=all-2.0.tar.gz&u=4e2abfd83a40e2012ebf6537ade2f207&p=29a34e24fc12d3f5fdfbb1ae948972c6' -O all-2.0.tar.gz &>/dev/null
@@ -77,10 +77,9 @@ else
    sudo /opt/nessus/sbin/nessuscli update all-2.0.tar.gz &>/dev/null
    sudo chattr -i -R /opt/nessus/lib/nessus/plugins  &>/dev/null
    sudo chattr -i -R /opt/nessus/var/nessus &> /dev/null
-   sudo echo -e "PLUGIN_SET = \"${vernum}\";\nPLUGIN_FEED = \"ProfessionalFeed (Direct)\";\nPLUGIN_FEED_TRANSPORT = \"Tenable Network Security Lightning\";" | sudo eval tee /opt/nessus/var/nessus/plugin_feed_info.inc \&\> /dev/null
+   sudo echo -e "PLUGIN_SET = \"$availablePlugins\";\nPLUGIN_FEED = \"ProfessionalFeed (Direct)\";\nPLUGIN_FEED_TRANSPORT = \"Tenable Network Security Lightning\";" > /opt/nessus/var/nessus/plugin_feed_info.inc
    echo " o Cracking Nessus."
-   sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
-   sudo cp /opt/nessus/var/nessus/plugin_feed_info.inc /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
+   sudo cp C /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
    sudo chattr +i /opt/nessus/var/nessus/plugin_feed_info.inc &>/dev/null
    sudo chattr +i -R /opt/nessus/lib/nessus/plugins &>/dev/null
 fi
