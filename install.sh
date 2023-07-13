@@ -79,7 +79,7 @@ else
    sudo chattr -i -R /opt/nessus/var/nessus &> /dev/null
    sudo echo -e "PLUGIN_SET = \"$availablePlugins\";\nPLUGIN_FEED = \"ProfessionalFeed (Direct)\";\nPLUGIN_FEED_TRANSPORT = \"Tenable Network Security Lightning\";" | sudo tee /opt/nessus/var/nessus/plugin_feed_info.inc
    echo " o Cracking Nessus."
-   sudo cp C /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
+   sudo cp /opt/nessus/var/nessus/plugin_feed_info.inc /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
    sudo chattr +i /opt/nessus/var/nessus/plugin_feed_info.inc &>/dev/null
    sudo chattr +i -R /opt/nessus/lib/nessus/plugins &>/dev/null
 fi
