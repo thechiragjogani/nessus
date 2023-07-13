@@ -60,7 +60,7 @@ sudo cat > /usr/bin/nessus<<'EOF'
 vernum=`curl https://plugins.nessus.org/v2/plugins.php 2> /dev/null`
 installedPlugins=`cat /opt/nessus/var/nessus/plugin_feed_info.inc | grep 2 | cut -b 14-25`
 echo " o Checking for new plugins."
-if [[ $installedPlugin == *"${vernum}"* ]]; then
+if [ "$installedPlugins" = "$vernum" ]; then
    echo
    echo " o Installed Plugins:   ${installedPlugins}"
    echo " o Available Plugins:   ${vernum}"
