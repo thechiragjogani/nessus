@@ -114,8 +114,8 @@ EOF
 sudo chmod +x /usr/bin/nessus
 sudo echo "export PATH=$PATH:/usr/bin" >> $HOME/.bashrc
 sudo echo "export PATH=$PATH:/usr/bin" >> $HOME/.zshrc
-source $HOME/.bashrc
-source $HOME/.zshrc
+source $HOME/.bashrc &>/dev/null
+source $HOME/.zshrc &>/dev/null
 echo
 echo "        Access your Nessus by typing this in terminal:"
 echo "        nessus"
