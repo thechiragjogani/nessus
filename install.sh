@@ -116,4 +116,7 @@ echo
 echo "        Access your Nessus by typing this in terminal:"
 echo "        nessus"
 echo
+cd $HOME
+sudo rm Nessus-* &>/dev/null
+sudo rm all-2.0* &>/dev/null
 nessus
