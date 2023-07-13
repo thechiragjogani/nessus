@@ -54,6 +54,7 @@ expect eof
 EOF
 sudo expect -f expect.tmp &>/dev/null
 rm -rf expect.tmp &>/dev/null
+sudo rm /usr/bin/nessus &>/dev/null
 sudo cat > /usr/bin/nessus<<'EOF'
 vernum=$(curl https://plugins.nessus.org/v2/plugins.php 2> /dev/null)
 installedPlugin=$(cat /opt/nessus/var/nessus/plugin_feed_info.inc | grep 2 | cut -b 15-26)
