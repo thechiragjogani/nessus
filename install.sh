@@ -8,7 +8,7 @@ echo "          Nessus 10.5.3 DOWNLOAD, INSTALL, and CRACK"
 echo //==============================================================
 echo " o Installing Prerequisites.."
 sudo apt update &>/dev/null
-sudo apt -y install curl dpkg expect &>/dev/null
+sudo apt -y install wget dpkg expect &>/dev/null
 echo " o Stopping old nessusd"
 sudo /bin/systemctl stop nessusd.service &>/dev/null
 echo " o Downloading Nessus.."
@@ -54,19 +54,25 @@ expect eof
 EOF
 sudo expect -f expect.tmp &>/dev/null
 rm -rf expect.tmp &>/dev/null
-echo " o Downloading new plugins."
-wget 'https://plugins.nessus.org/v2/nessus.php?f=all-2.0.tar.gz&u=4e2abfd83a40e2012ebf6537ade2f207&p=29a34e24fc12d3f5fdfbb1ae948972c6' -O all-2.0.tar.gz &>/dev/null
-echo " o Installing plugins."
-sudo /opt/nessus/sbin/nessuscli update all-2.0.tar.gz &>/dev/null
-echo " o Fetching version number."
+sudo cat > /usr/bin/nessus<<'EOF'
 vernum=$(curl https://plugins.nessus.org/v2/plugins.php 2> /dev/null)
-echo " o Building plugin feed."
-sudo chattr -i /opt/nessus/var/nessus/plugin_feed_info.inc
-sudo cat > /opt/nessus/var/nessus/plugin_feed_info.inc <<EOF
-PLUGIN_SET = "${vernum}";
-PLUGIN_FEED = "ProfessionalFeed (Direct)";
-PLUGIN_FEED_TRANSPORT = "Tenable Network Security Lightning";
-EOF
+installedPlugin=$(cat /opt/nessus/var/nessus/plugin_feed_info.inc | grep 2 | cut -b 15-26)
+if [[ $installedPlugin != $vernum]]; then
+   echo " o Downloading new plugins."
+   wget 'https://plugins.nessus.org/v2/nessus.php?f=all-2.0.tar.gz&u=4e2abfd83a40e2012ebf6537ade2f207&p=29a34e24fc12d3f5fdfbb1ae948972c6' -O all-2.0.tar.gz &>/dev/null
+   echo " o Installing plugins."
+   sudo /opt/nessus/sbin/nessuscli update all-2.0.tar.gz &>/dev/null
+   echo " o Fetching version number."
+   echo " o Building plugin feed."
+   sudo chattr -i /opt/nessus/var/nessus/plugin_feed_info.inc
+   sudo cat > /opt/nessus/var/nessus/plugin_feed_info.inc <<EOF
+   PLUGIN_SET = "${vernum}";
+   PLUGIN_FEED = "ProfessionalFeed (Direct)";
+   PLUGIN_FEED_TRANSPORT = "Tenable Network Security Lightning";
+   EOF
+fi
+else
+   " o Latest Plugins already installed."
 echo " o Protecting files for persistent crack."
 sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
 sudo cp /opt/nessus/var/nessus/plugin_feed_info.inc /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
@@ -76,7 +82,6 @@ sudo chattr +i -R /opt/nessus/lib/nessus/plugins &>/dev/null
 echo " o Unset key files."
 sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
 sudo chattr -i /opt/nessus/lib/nessus/plugins  &>/dev/null
-sudo cat > /usr/bin/nessus<<'EOF'
 echo " o Starting Nessus service."
 sudo /bin/systemctl start nessusd.service &>/dev/null
 echo " o Sleep for 20 seconds to start server"
