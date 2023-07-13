@@ -3,9 +3,9 @@ if [[ $(id -u) -ne 0 ]] ; then echo "Please run as root" ; exit 1 ; fi
 cd $HOME
 sudo rm Nessus-* &>/dev/null
 sudo rm all-2.0* &>/dev/null
-echo //==============================================================
-echo "          Nessus 10.5.3 DOWNLOAD, INSTALL, and CRACK"
-echo //==============================================================
+echo //========================================================================
+echo "          Nessus 10.5.3 DOWNLOAD, INSTALL, and CRACK by Chirag" 
+echo //========================================================================
 echo " o Installing Prerequisites.."
 sudo apt update &>/dev/null
 sudo apt -y install wget dpkg expect &>/dev/null
