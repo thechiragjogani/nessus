@@ -75,7 +75,7 @@ else
    wget 'https://plugins.nessus.org/v2/nessus.php?f=all-2.0.tar.gz&u=4e2abfd83a40e2012ebf6537ade2f207&p=29a34e24fc12d3f5fdfbb1ae948972c6' -O all-2.0.tar.gz &>/dev/null
    echo " o Installing plugins."
    sudo /opt/nessus/sbin/nessuscli update all-2.0.tar.gz &>/dev/null
-   sudo chattr -i /opt/nessus/var/nessus/plugin_feed_info.inc
+   sudo chattr -i /opt/nessus/var/nessus/plugin_feed_info.inc &> /dev/null
    sudo echo -e "PLUGIN_SET = \"${vernum}\";\nPLUGIN_FEED = \"ProfessionalFeed (Direct)\";\nPLUGIN_FEED_TRANSPORT = \"Tenable Network Security Lightning\";" &> /dev/null | sudo tee TEST &> /dev/null
    echo " o Cracking Nessus."
    sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
