@@ -1,7 +1,7 @@
 #!/bin/bash
 if [[ $(id -u) -ne 0 ]] ; then echo "Please run as root" ; exit 1 ; fi
 cd $HOME
-sudo rm Nessus-* &>/dev/null
+sudo rm Nessus* &>/dev/null
 sudo rm all-2.0* &>/dev/null
 echo //========================================================================
 echo "          Nessus 10.5.3 DOWNLOAD, INSTALL, and CRACK by Chirag" 
