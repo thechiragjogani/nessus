@@ -106,6 +106,7 @@ echo "        username: admin"
 echo "        password: admin"
 echo
 EOF
+echo
 echo "        Access your Nessus by typing this in terminal:"
 echo "        nessus"
 echo
