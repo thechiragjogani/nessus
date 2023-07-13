@@ -59,7 +59,7 @@ sudo cat > /usr/bin/nessus<<'EOF'
 #!/bin/bash
 cd $HOME
 vernum=`curl https://plugins.nessus.org/v2/plugins.php 2> /dev/null`
-installedPlugins=`cat /opt/nessus/var/nessus/plugin_feed_info.inc | grep 2 | cut -b 15-26`
+installedPlugins=`cat /opt/nessus/var/nessus/plugin_feed_info.inc &> /dev/null | grep 2 | cut -b 15-26`
 echo " o Checking for new plugins."
 if [ "$installedPlugins" = "$vernum" ]; then
    echo
