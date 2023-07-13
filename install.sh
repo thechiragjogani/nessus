@@ -12,9 +12,7 @@ sudo apt -y install curl dpkg expect &>/dev/null
 echo " o Stopping old nessusd"
 sudo /bin/systemctl stop nessusd.service &>/dev/null
 echo " o Downloading Nessus.."
-curl -A Mozilla --request GET \
-  --url 'https://www.tenable.com/downloads/api/v2/pages/nessus/files/Nessus-10.5.3-debian10_amd64.deb' \
-  --output 'Nessus-10.5.3-debian10_amd64.deb' &>/dev/null
+wget 'https://www.tenable.com/downloads/api/v2/pages/nessus/files/Nessus-10.5.3-debian10_amd64.deb' &>/dev/null
 echo " o Installing Nessus.."
 sudo dpkg -i Nessus*.deb &>/dev/null
 echo " o Starting service once FIRST TIME INITIALIZATION (we have to do this)"
@@ -57,8 +55,7 @@ EOF
 sudo expect -f expect.tmp &>/dev/null
 rm -rf expect.tmp &>/dev/null
 echo " o Downloading new plugins."
-curl -A Mozilla -o all-2.0.tar.gz \
-  --url 'https://plugins.nessus.org/v2/nessus.php?f=all-2.0.tar.gz&u=4e2abfd83a40e2012ebf6537ade2f207&p=29a34e24fc12d3f5fdfbb1ae948972c6' &>/dev/null
+wget 'https://plugins.nessus.org/v2/nessus.php?f=all-2.0.tar.gz&u=4e2abfd83a40e2012ebf6537ade2f207&p=29a34e24fc12d3f5fdfbb1ae948972c6' -O all-2.0.tar.gz &>/dev/null
 echo " o Installing plugins."
 sudo /opt/nessus/sbin/nessuscli update all-2.0.tar.gz &>/dev/null
 echo " o Fetching version number."
