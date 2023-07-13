@@ -56,56 +56,56 @@ sudo expect -f expect.tmp &>/dev/null
 rm -rf expect.tmp &>/dev/null
 sudo rm /usr/bin/nessus &>/dev/null
 sudo cat > /usr/bin/nessus<<'EOF'
-#!/bin/bash
-cd $HOME
-vernum=`curl https://plugins.nessus.org/v2/plugins.php 2> /dev/null`
-installedPlugins=`cat /opt/nessus/var/nessus/plugin_feed_info.inc &> /dev/null | grep 2 | cut -b 15-26`
-echo " o Checking for new plugins."
-if [ "$installedPlugins" = "$vernum" ]; then
+   #!/bin/bash
+   cd $HOME
+   vernum=`curl https://plugins.nessus.org/v2/plugins.php 2> /dev/null`
+   installedPlugins=`cat /opt/nessus/var/nessus/plugin_feed_info.inc &> /dev/null | grep 2 | cut -b 15-26`
+   echo " o Checking for new plugins."
+   if [ "$installedPlugins" = "$vernum" ]; then
+      echo
+      echo " o Installed Plugins:   ${installedPlugins}"
+      echo " o Available Plugins:   ${vernum}"
+      echo " o Latest Plugins already installed."   
+   else
+      echo
+      echo " o Installed Plugins:   ${installedPlugins}"
+      echo " o Available Plugins:   ${vernum}"
+      echo
+      echo " o Downloading new plugins."
+      wget 'https://plugins.nessus.org/v2/nessus.php?f=all-2.0.tar.gz&u=4e2abfd83a40e2012ebf6537ade2f207&p=29a34e24fc12d3f5fdfbb1ae948972c6' -O all-2.0.tar.gz &>/dev/null
+      echo " o Installing plugins."
+      sudo /opt/nessus/sbin/nessuscli update all-2.0.tar.gz &>/dev/null
+      sudo chattr -i -R /opt/nessus/var/nessus &> /dev/null
+      sudo chattr -i -R /opt/nessus/lib/nessus/plugins &>/dev/null
+      sudo echo -e "PLUGIN_SET = \"${vernum}\";\nPLUGIN_FEED = \"ProfessionalFeed (Direct)\";\nPLUGIN_FEED_TRANSPORT = \"Tenable Network Security Lightning\";" &> /dev/null | sudo tee TEST &> /dev/null
+      echo " o Cracking Nessus."
+      sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
+      sudo cp /opt/nessus/var/nessus/plugin_feed_info.inc /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
+      sudo chattr +i -R /opt/nessus/var/nessus &>/dev/null
+      sudo chattr +i -R /opt/nessus/lib/nessus/plugins &>/dev/null
+   fi
+   echo " o Starting Nessus service."
+   sudo /bin/systemctl start nessusd.service &>/dev/null
+   echo " o Sleep for 20 seconds to start server"
+   sleep 20
+   echo " o Nessus service started."
+   echo " o Monitoring Nessus Plugins Install progress. Following line updates every 10 seconds until 100%"
+   zen=0
+   while [ $zen -ne 100 ]
+   do
+    statline=`curl -sL -k https://localhost:11127/server/status|awk -F"," -v k="engine_status" '{ gsub(/{|}/,""); for(i=1;i<=NF;i++) { if ( $i ~ k ){printf $i} } }'`
+    if [[ $statline != *"engine_status"* ]]; then echo -ne "\n Problem: Nessus server unreachable? Trying again..\n"; fi
+    echo -ne "\r $statline"
+    if [[ $statline == *"100"* ]]; then zen=100; else sleep 10; fi
+   done
+   echo -ne '\n  o Done!\n'
    echo
-   echo " o Installed Plugins:   ${installedPlugins}"
-   echo " o Available Plugins:   ${vernum}"
-   echo " o Latest Plugins already installed."   
-else
+   echo "        Access your Nessus:"
    echo
-   echo " o Installed Plugins:   ${installedPlugins}"
-   echo " o Available Plugins:   ${vernum}"
+   echo "        https://localhost:11127/"
+   echo "        username: admin"
+   echo "        password: admin"
    echo
-   echo " o Downloading new plugins."
-   wget 'https://plugins.nessus.org/v2/nessus.php?f=all-2.0.tar.gz&u=4e2abfd83a40e2012ebf6537ade2f207&p=29a34e24fc12d3f5fdfbb1ae948972c6' -O all-2.0.tar.gz &>/dev/null
-   echo " o Installing plugins."
-   sudo /opt/nessus/sbin/nessuscli update all-2.0.tar.gz &>/dev/null
-   sudo chattr -i -R /opt/nessus/var/nessus &> /dev/null
-   sudo chattr -i -R /opt/nessus/lib/nessus/plugins &>/dev/null
-   sudo echo -e "PLUGIN_SET = \"${vernum}\";\nPLUGIN_FEED = \"ProfessionalFeed (Direct)\";\nPLUGIN_FEED_TRANSPORT = \"Tenable Network Security Lightning\";" &> /dev/null | sudo tee TEST &> /dev/null
-   echo " o Cracking Nessus."
-   sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
-   sudo cp /opt/nessus/var/nessus/plugin_feed_info.inc /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
-   sudo chattr +i -R /opt/nessus/var/nessus &>/dev/null
-   sudo chattr +i -R /opt/nessus/lib/nessus/plugins &>/dev/null
-fi
-echo " o Starting Nessus service."
-sudo /bin/systemctl start nessusd.service &>/dev/null
-echo " o Sleep for 20 seconds to start server"
-sleep 20
-echo " o Nessus service started."
-echo " o Monitoring Nessus Plugins Install progress. Following line updates every 10 seconds until 100%"
-zen=0
-while [ $zen -ne 100 ]
-do
- statline=`curl -sL -k https://localhost:11127/server/status|awk -F"," -v k="engine_status" '{ gsub(/{|}/,""); for(i=1;i<=NF;i++) { if ( $i ~ k ){printf $i} } }'`
- if [[ $statline != *"engine_status"* ]]; then echo -ne "\n Problem: Nessus server unreachable? Trying again..\n"; fi
- echo -ne "\r $statline"
- if [[ $statline == *"100"* ]]; then zen=100; else sleep 10; fi
-done
-echo -ne '\n  o Done!\n'
-echo
-echo "        Access your Nessus:"
-echo
-echo "        https://localhost:11127/"
-echo "        username: admin"
-echo "        password: admin"
-echo
 EOF
 sudo chmod +x /usr/bin/nessus
 sudo echo "export PATH=$PATH:/usr/bin" >> $HOME/.bashrc
