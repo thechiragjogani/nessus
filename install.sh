@@ -58,7 +58,8 @@ sudo rm /usr/bin/nessus &>/dev/null
 sudo cat > /usr/bin/nessus<<'EOF'
 vernum=$(curl https://plugins.nessus.org/v2/plugins.php 2> /dev/null)
 installedPlugin=$(cat /opt/nessus/var/nessus/plugin_feed_info.inc | grep 2 | cut -b 15-26)
-if [[ $installedPlugin != $vernum]]; then
+if [[ $installedPlugin != $vernum]]
+then
    echo " o Downloading new plugins."
    wget 'https://plugins.nessus.org/v2/nessus.php?f=all-2.0.tar.gz&u=4e2abfd83a40e2012ebf6537ade2f207&p=29a34e24fc12d3f5fdfbb1ae948972c6' -O all-2.0.tar.gz &>/dev/null
    echo " o Installing plugins."
@@ -71,18 +72,18 @@ if [[ $installedPlugin != $vernum]]; then
    PLUGIN_FEED = "ProfessionalFeed (Direct)";
    PLUGIN_FEED_TRANSPORT = "Tenable Network Security Lightning";
    EOF
-fi
+   echo " o Protecting files for persistent crack."
+   sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
+   sudo cp /opt/nessus/var/nessus/plugin_feed_info.inc /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
+   echo " o Set everything immutable."
+   sudo chattr +i /opt/nessus/var/nessus/plugin_feed_info.inc &>/dev/null
+   sudo chattr +i -R /opt/nessus/lib/nessus/plugins &>/dev/null
+   echo " o Unset key files."
+   sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
+   sudo chattr -i /opt/nessus/lib/nessus/plugins  &>/dev/null
 else
-   " o Latest Plugins already installed."
-echo " o Protecting files for persistent crack."
-sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
-sudo cp /opt/nessus/var/nessus/plugin_feed_info.inc /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
-echo " o Set everything immutable."
-sudo chattr +i /opt/nessus/var/nessus/plugin_feed_info.inc &>/dev/null
-sudo chattr +i -R /opt/nessus/lib/nessus/plugins &>/dev/null
-echo " o Unset key files."
-sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
-sudo chattr -i /opt/nessus/lib/nessus/plugins  &>/dev/null
+   echo " o Latest Plugins already installed."
+fi
 echo " o Starting Nessus service."
 sudo /bin/systemctl start nessusd.service &>/dev/null
 echo " o Sleep for 20 seconds to start server"
