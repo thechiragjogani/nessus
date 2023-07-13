@@ -56,13 +56,19 @@ sudo expect -f expect.tmp &>/dev/null
 rm -rf expect.tmp &>/dev/null
 sudo rm /usr/bin/nessus &>/dev/null
 sudo cat > /usr/bin/nessus<<'EOF'
+#!/bin/bash
 vernum=`curl https://plugins.nessus.org/v2/plugins.php 2> /dev/null`
-installedPlugin=`cat /opt/nessus/var/nessus/plugin_feed_info.inc | grep 2 | cut -b 15-26`
-if [[ $installedPlugin != $vernum]]
-then
+installedPlugins=`cat /opt/nessus/var/nessus/plugin_feed_info.inc | grep 2 | cut -b 15-26`
+echo " o Checking for new plugins."
+if [[ $installedPlugin == *"${vernum}"* ]]; then
    echo
-   echo " o Insalled Plugins: ${installedPlugins}"
-   echo " o Available Plugins: ${vernum}"
+   echo " o Installed Plugins:   ${installedPlugins}"
+   echo " o Available Plugins:   ${vernum}"
+   echo " o Latest Plugins already installed."   
+else
+   echo
+   echo " o Installed Plugins:   ${installedPlugins}"
+   echo " o Available Plugins:   ${vernum}"
    echo
    echo " o Downloading new plugins."
    wget 'https://plugins.nessus.org/v2/nessus.php?f=all-2.0.tar.gz&u=4e2abfd83a40e2012ebf6537ade2f207&p=29a34e24fc12d3f5fdfbb1ae948972c6' -O all-2.0.tar.gz &>/dev/null
@@ -71,11 +77,7 @@ then
    echo " o Fetching version number."
    echo " o Building plugin feed."
    sudo chattr -i /opt/nessus/var/nessus/plugin_feed_info.inc
-   sudo cat > /opt/nessus/var/nessus/plugin_feed_info.inc <<EOF
-   PLUGIN_SET = "${vernum}";
-   PLUGIN_FEED = "ProfessionalFeed (Direct)";
-   PLUGIN_FEED_TRANSPORT = "Tenable Network Security Lightning";
-   EOF
+   sudo echo "PLUGIN_SET = "${vernum}";\nPLUGIN_FEED = \"ProfessionalFeed (Direct)\";\nPLUGIN_FEED_TRANSPORT = \"Tenable Network Security Lightning\";" > /opt/nessus/var/nessus/plugin_feed_info.inc
    echo " o Protecting files for persistent crack."
    sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
    sudo cp /opt/nessus/var/nessus/plugin_feed_info.inc /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
@@ -85,11 +87,6 @@ then
    echo " o Unset key files."
    sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
    sudo chattr -i /opt/nessus/lib/nessus/plugins  &>/dev/null
-else
-   echo
-   echo " o Insalled Plugins: ${installedPlugins}"
-   echo " o Available Plugins: ${vernum}"
-   echo " o Latest Plugins already installed."
 fi
 echo " o Starting Nessus service."
 sudo /bin/systemctl start nessusd.service &>/dev/null
@@ -114,6 +111,7 @@ echo "        username: admin"
 echo "        password: admin"
 echo
 EOF
+sudo chmod +x /usr/bin/nessus
 echo
 echo "        Access your Nessus by typing this in terminal:"
 echo "        nessus"
