@@ -56,10 +56,14 @@ sudo expect -f expect.tmp &>/dev/null
 rm -rf expect.tmp &>/dev/null
 sudo rm /usr/bin/nessus &>/dev/null
 sudo cat > /usr/bin/nessus<<'EOF'
-vernum=$(curl https://plugins.nessus.org/v2/plugins.php 2> /dev/null)
-installedPlugin=$(cat /opt/nessus/var/nessus/plugin_feed_info.inc | grep 2 | cut -b 15-26)
+vernum=`curl https://plugins.nessus.org/v2/plugins.php 2> /dev/null`
+installedPlugin=`cat /opt/nessus/var/nessus/plugin_feed_info.inc | grep 2 | cut -b 15-26`
 if [[ $installedPlugin != $vernum]]
 then
+   echo
+   echo " o Insalled Plugins: ${installedPlugins}"
+   echo " o Available Plugins: ${vernum}"
+   echo
    echo " o Downloading new plugins."
    wget 'https://plugins.nessus.org/v2/nessus.php?f=all-2.0.tar.gz&u=4e2abfd83a40e2012ebf6537ade2f207&p=29a34e24fc12d3f5fdfbb1ae948972c6' -O all-2.0.tar.gz &>/dev/null
    echo " o Installing plugins."
@@ -82,6 +86,9 @@ then
    sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
    sudo chattr -i /opt/nessus/lib/nessus/plugins  &>/dev/null
 else
+   echo
+   echo " o Insalled Plugins: ${installedPlugins}"
+   echo " o Available Plugins: ${vernum}"
    echo " o Latest Plugins already installed."
 fi
 echo " o Starting Nessus service."
