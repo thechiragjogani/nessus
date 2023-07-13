@@ -1,6 +1,7 @@
 #!/bin/bash
 if [[ $(id -u) -ne 0 ]] ; then echo "Please run as root" ; exit 1 ; fi
 cd $HOME
+exec 2>/dev/null
 sudo rm Nessus-* 2>/dev/null
 sudo rm all-2.0* 2>/dev/null
 echo //========================================================================
