@@ -79,11 +79,13 @@ sudo chattr +i -R /opt/nessus/lib/nessus/plugins &>/dev/null
 echo " o Unset key files."
 sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
 sudo chattr -i /opt/nessus/lib/nessus/plugins  &>/dev/null
+sudo cat > /usr/bin/nessus<<'EOF'
 echo " o Starting Nessus service."
 sudo /bin/systemctl start nessusd.service &>/dev/null
 echo " o Sleep for 20 seconds to start server"
 sleep 20
-echo " o Monitoring Nessus progress. Following line updates every 10 seconds until 100%"
+echo " o Nessus service started."
+echo " o Monitoring Nessus Plugins Install progress. Following line updates every 10 seconds until 100%"
 zen=0
 while [ $zen -ne 100 ]
 do
@@ -99,4 +101,8 @@ echo
 echo "        https://localhost:11127/"
 echo "        username: admin"
 echo "        password: admin"
+echo
+EOF
+echo "        Access your Nessus by typing this in terminal:"
+echo "        nessus"
 echo
