@@ -77,7 +77,7 @@ else
    echo " o Fetching version number."
    echo " o Building plugin feed."
    sudo chattr -i /opt/nessus/var/nessus/plugin_feed_info.inc
-   sudo echo "PLUGIN_SET = "${vernum}";\nPLUGIN_FEED = \"ProfessionalFeed (Direct)\";\nPLUGIN_FEED_TRANSPORT = \"Tenable Network Security Lightning\";" > /opt/nessus/var/nessus/plugin_feed_info.inc
+   sudo echo -e "PLUGIN_SET = "${vernum}";\nPLUGIN_FEED = \"ProfessionalFeed (Direct)\";\nPLUGIN_FEED_TRANSPORT = \"Tenable Network Security Lightning\";" > /opt/nessus/var/nessus/plugin_feed_info.inc
    echo " o Protecting files for persistent crack."
    sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
    sudo cp /opt/nessus/var/nessus/plugin_feed_info.inc /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
