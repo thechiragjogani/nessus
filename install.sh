@@ -59,7 +59,7 @@ sudo rm /usr/bin/nessus &>/dev/null
 sudo cat > /usr/bin/nessus<<'EOF'
 #!/bin/bash
 availablePlugins=`curl https://plugins.nessus.org/v2/plugins.php 2> /dev/null`
-installedPlugins=`cat /opt/nessus/var/nessus/plugin_feed_info.inc | grep 2 | cut -b 15-26`
+installedPlugins=`sudo cat /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc | grep 2 | cut -b 15-26`
 echo " o Checking for new plugins."
 if [ "$installedPlugins" = "$availablePlugins" ]; then
    echo
@@ -73,21 +73,25 @@ else
    echo
    echo " o Downloading new plugins."
    wget 'https://plugins.nessus.org/v2/nessus.php?f=all-2.0.tar.gz&u=4e2abfd83a40e2012ebf6537ade2f207&p=29a34e24fc12d3f5fdfbb1ae948972c6' -O all-2.0.tar.gz &>/dev/null
+   echo " o Installing new plugins."
+   sudo chattr -i -R /opt/nessus/lib/nessus/plugins  &>/dev/null
+   sudo /opt/nessus/sbin/nessuscli update all-2.0.tar.gz &>/dev/null
+   sudo kill -SIGSTOP $(pgrep nessusd)
    echo
    sudo chattr -i /opt/nessus/var/nessus/plugin_feed_info.inc &>/dev/null
    sudo echo -ne "PLUGIN_SET = \"$availablePlugins\";\nPLUGIN_FEED = \"ProfessionalFeed (Direct)\";\nPLUGIN_FEED_TRANSPORT = \"Tenable Network Security Lightning\";" | sudo tee /opt/nessus/var/nessus/plugin_feed_info.inc
    sudo cp /opt/nessus/var/nessus/plugin_feed_info.inc /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
-   sudo chattr -i -R /opt/nessus/lib/nessus/plugins  &>/dev/null
-   echo " o Installing new plugins."
-   sudo /opt/nessus/sbin/nessuscli update all-2.0.tar.gz &>/dev/null
+   echo
    echo " o Doing Magic."
    sudo chattr +i /opt/nessus/var/nessus/plugin_feed_info.inc &>/dev/null
    sudo chattr +i -R /opt/nessus/lib/nessus/plugins &>/dev/null
    sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
+   sudo chattr -i /opt/nessus/lib/nessus/plugins &>/dev/null
+   sudo kill -CONT $(pgrep nessusd)
 fi
 echo
 echo " o Starting Nessus service."
-sudo /bin/systemctl start nessusd.service &>/dev/null; sudo /bin/systemctl restart nessusd.service &>/dev/null
+sudo /bin/systemctl start nessusd.service &>/dev/null
 echo " o Sleep for 20 seconds to start server"
 sleep 20
 echo " o Nessus service started."
