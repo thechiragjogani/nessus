@@ -87,7 +87,7 @@ else
 fi
 echo
 echo " o Starting Nessus service."
-sudo /bin/systemctl start nessusd.service &>/dev/null
+sudo /bin/systemctl start nessusd.service &>/dev/null; sudo /bin/systemctl restart nessusd.service &>/dev/null
 echo " o Sleep for 20 seconds to start server"
 sleep 20
 echo " o Nessus service started."
