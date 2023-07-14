@@ -60,6 +60,8 @@ sudo cat > /usr/bin/nessus<<'EOF'
 #!/bin/bash
 availablePlugins=`curl https://plugins.nessus.org/v2/plugins.php 2> /dev/null`
 installedPlugins=`sudo cat /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc | grep 2 | cut -b 15-26`
+read -p "Do you want to update plugins? (Y/N): " confirm
+if [[ "$confirm" == [yY] || "$confirm" == [yY][eE][sS] ]]; then
 echo " o Checking for new plugins."
 if [ "$installedPlugins" = "$availablePlugins" ]; then
    echo
@@ -88,6 +90,7 @@ else
    sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
    sudo chattr -i /opt/nessus/lib/nessus/plugins &>/dev/null
    sudo kill -CONT $(pgrep nessusd)
+fi
 fi
 echo
 echo " o Starting Nessus service."
