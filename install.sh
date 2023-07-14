@@ -124,5 +124,4 @@ source $HOME/.zshrc &>/dev/null
 echo
 echo "        Access your Nessus by typing this in terminal:"
 echo "        nessus"
-echo
 nessus
