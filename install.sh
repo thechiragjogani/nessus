@@ -12,6 +12,9 @@ sudo apt update &>/dev/null
 sudo apt -y install wget dpkg expect &>/dev/null
 echo " o Stopping old nessusd"
 sudo /bin/systemctl stop nessusd.service &>/dev/null
+echo " o Uninstalling old nessusd"
+sudo chattr -i -R /opt/nessus &>/dev/null
+sudo rm -rf /opt/nessus &>/dev/null
 echo " o Downloading Nessus.."
 wget 'https://www.tenable.com/downloads/api/v2/pages/nessus/files/Nessus-10.5.3-debian10_amd64.deb' &>/dev/null
 echo " o Installing Nessus.."
