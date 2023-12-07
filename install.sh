@@ -5,7 +5,7 @@ exec 2>/dev/null
 sudo rm Nessus-* 2>/dev/null
 sudo rm all-2.0* 2>/dev/null
 echo //========================================================================
-echo "          Nessus 10.5.3 DOWNLOAD, INSTALL, and CRACK by Chirag" 
+echo "          Nessus 10.6.3 DOWNLOAD, INSTALL, and CRACK by Chirag" 
 echo //========================================================================
 echo " o Installing Prerequisites.."
 sudo apt update &>/dev/null
@@ -16,7 +16,7 @@ echo " o Uninstalling old nessusd"
 sudo chattr -i -R /opt/nessus &>/dev/null
 sudo rm -rf /opt/nessus &>/dev/null
 echo " o Downloading Nessus.."
-wget 'https://www.tenable.com/downloads/api/v2/pages/nessus/files/Nessus-10.5.3-debian10_amd64.deb' &>/dev/null
+wget 'https://www.tenable.com/downloads/api/v2/pages/nessus/files/Nessus-10.6.3-debian10_amd64.deb' &>/dev/null
 echo " o Installing Nessus.."
 sudo dpkg -i Nessus*.deb &>/dev/null
 echo " o Starting service once FIRST TIME INITIALIZATION (we have to do this)"
@@ -81,7 +81,7 @@ else
    echo " o Installing new plugins."
    sudo chattr -i -R /opt/nessus/lib/nessus/plugins  &>/dev/null
    sudo /opt/nessus/sbin/nessuscli update all-2.0.tar.gz &>/dev/null
-   sudo kill -SIGSTOP $(pgrep nessusd)
+   sudo kill -SIGSTOP $(pgrep nessusd) 2>/dev/null
    echo
    sudo chattr -i /opt/nessus/var/nessus/plugin_feed_info.inc &>/dev/null
    sudo echo -ne "PLUGIN_SET = \"$availablePlugins\";\nPLUGIN_FEED = \"ProfessionalFeed (Direct)\";\nPLUGIN_FEED_TRANSPORT = \"Tenable Network Security Lightning\";" | sudo tee /opt/nessus/var/nessus/plugin_feed_info.inc
@@ -92,7 +92,7 @@ else
    sudo chattr +i -R /opt/nessus/lib/nessus/plugins &>/dev/null
    sudo chattr -i /opt/nessus/lib/nessus/plugins/plugin_feed_info.inc &>/dev/null
    sudo chattr -i /opt/nessus/lib/nessus/plugins &>/dev/null
-   sudo kill -CONT $(pgrep nessusd)
+   sudo kill -CONT $(pgrep nessusd) 2>/dev/null
 fi
 fi
 echo
@@ -120,8 +120,8 @@ echo "        password: admin"
 echo
 EOF
 sudo chmod +x /usr/bin/nessus
-sudo echo "export PATH=$PATH:/usr/bin" >> $HOME/.bashrc
-sudo echo "export PATH=$PATH:/usr/bin" >> $HOME/.zshrc
+sudo echo "export PATH=/usr/bin:$PATH" >> $HOME/.bashrc
+sudo echo "export PATH=/usr/bin:$PATH" >> $HOME/.zshrc
 source $HOME/.bashrc &>/dev/null
 source $HOME/.zshrc &>/dev/null
 echo
