@@ -6,7 +6,7 @@ exec 2>/dev/null
 sudo rm Nessus-* 2>/dev/null
 sudo rm all-2.0* 2>/dev/null
 echo //========================================================================
-echo "          Nessus 10.6.3 DOWNLOAD, INSTALL, and CRACK by Chirag" 
+echo "          Nessus 10.7.2 DOWNLOAD, INSTALL, and CRACK by Chirag" 
 echo //========================================================================
 echo " o Installing Prerequisites.."
 sudo apt update &>/dev/null
